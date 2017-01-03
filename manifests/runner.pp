@@ -17,7 +17,7 @@ class sonarqube::runner (
   validate_absolute_path($installroot)
 
   Exec {
-    path => '/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/bin'
+    path => '/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/bin',
   }
 
   anchor { 'sonarqube::runner::begin': } ->
@@ -28,10 +28,11 @@ class sonarqube::runner (
     installroot  => $installroot,
   } ->
   class { '::sonarqube::runner::config':
-    package_name => $package_name,
-    version      => $version,
-    installroot  => $installroot,
-    jdbc         => $jdbc,
+    package_name     => $package_name,
+    version          => $version,
+    installroot      => $installroot,
+    jdbc             => $jdbc,
+    sonarqube_server => $sonarqube_server,
   } ~>
   anchor { 'sonarqube::runner::end': }
 }

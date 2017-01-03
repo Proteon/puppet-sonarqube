@@ -122,10 +122,13 @@ sonar.web.https.keystoreType=<%= @https['keystoretype'] %>
 sonar.search.javaOpts=<%= @search_java_opts %>
 <% end -%>
 
+sonar.search.port=<%= @search_port %>
+sonar.search.host=<%= @search_host %>
+
 #-----------------------------------------------------------------------
 # DATABASE
 #
-# IMPORTANT : the embedded database Derby is used by default. 
+# IMPORTANT : the embedded database Derby is used by default.
 # It is recommended for tests only. Please use an external database
 # for production environment (MySQL, Oracle, Postgresql, SQLServer)
 #
@@ -136,12 +139,9 @@ sonar.search.javaOpts=<%= @search_java_opts %>
 #----- Credentials
 # Permissions to create tables and indexes must be granted to JDBC user.
 # The schema must be created first.
-sonar.jdbc.username:                       <%= @jdbc['username'] %>
-sonar.jdbc.password:                       <%= @jdbc['password'] %>
-
-sonar.jdbc.url:                            <%= @jdbc['url'] %>
-sonar.jdbc.driverClassName:                <%= @jdbc['driver_class_name'] %>
-sonar.jdbc.validationQuery:                <%= @jdbc['validation_query'] %>
+sonar.jdbc.url:         <%= @jdbc['url'] %>
+sonar.jdbc.username:    <%= @jdbc['username'] %>
+sonar.jdbc.password:    <%= @jdbc['password'] %>
 
 #----- Embedded database H2
 # Note : it does not accept connections from remote hosts, so the
@@ -195,12 +195,12 @@ sonar.jdbc.validationQuery:                <%= @jdbc['validation_query'] %>
 
 
 #----- Connection pool settings
-sonar.jdbc.maxActive:                      20
-sonar.jdbc.maxIdle:                        5
-sonar.jdbc.minIdle:                        2
-sonar.jdbc.maxWait:                        5000
-sonar.jdbc.minEvictableIdleTimeMillis:     600000
-sonar.jdbc.timeBetweenEvictionRunsMillis:  30000
+sonar.jdbc.maxActive:                      <% if @jdbc['max_active'] %><%= @jdbc['max_active'] %><% else %>50<% end %>
+sonar.jdbc.maxIdle:                        <% if @jdbc['max_idle'] %><%= @jdbc['max_idle'] %><% else %>5<% end %>
+sonar.jdbc.minIdle:                        <% if @jdbc['min_idle'] %><%= @jdbc['min_idle'] %><% else %>2<% end %>
+sonar.jdbc.maxWait:                        <% if @jdbc['max_wait'] %><%= @jdbc['max_wait'] %><% else %>5000<% end %>
+sonar.jdbc.minEvictableIdleTimeMillis:     <% if @jdbc['min_evictable_idle_time_millis'] %><%= @jdbc['min_evictable_idle_time_millis'] %><% else %>600000<% end %>
+sonar.jdbc.timeBetweenEvictionRunsMillis:  <% if @jdbc['time_between_eviction_runs_millis'] %><%= @jdbc['time_between_eviction_runs_millis'] %><% else %>30000<% end %>
 
 <% end -%>
 
@@ -291,6 +291,14 @@ ldap.group.request=<%= @ldap['group_request'] %>
 <% end -%>
 <% if @ldap['group_id_attribute'] -%>
 ldap.group.idAttribute=<%= @ldap['group_id_attribute'] %>
+<% end -%>
+
+<% elsif !@pam.empty? -%>
+
+# PAM authentication
+sonar.security.realm: PAM
+<% if @pam['serviceName'] -%>
+pam.serviceName=<%= @pam['serviceName'] %>
 <% end -%>
 
 <% end -%>
